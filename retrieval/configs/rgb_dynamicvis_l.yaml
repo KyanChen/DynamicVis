@@ -1,0 +1,20 @@
+model:
+  name: DynamicVisBackbone
+  img_size: 512
+  data_mean:  # RGB
+    - 123.675
+    - 116.28
+    - 103.53
+  data_std:
+    - 58.395
+    - 57.12
+    - 57.375
+  checkpoint: work_dirs/fMoW/pretrain_dynamicvis_l_bf16_mamba/epoch_200.pth
+dataset:
+  name: BigEarthNetBGR
+  split: test
+dataloader:
+  batch_size: 16  # 16
+  num_workers: 4  # 4
+  pin_memory: False
+  shuffle: False
