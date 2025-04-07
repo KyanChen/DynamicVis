@@ -6,13 +6,12 @@ import math
 import os
 import warnings
 from typing import List, Union
-
 import mmengine
 import torch
 from braceexpand import braceexpand
 from mmengine import print_log, is_abs, join_path
 from mmengine.dataset import Compose, BaseDataset
-
+import wids
 from mmdet.datasets import CocoDataset
 from mmdet.datasets.api_wrappers import COCO
 from mmseg.datasets import BaseSegDataset
@@ -94,7 +93,6 @@ class TarDetDataset(wds.DataPipeline):
         return results
 
     def real_len(self):
-        # return 128
         meta_file = os.path.dirname(self.shards_path_or_url)+'/meta.json'
         if not os.path.exists(meta_file):
             warnings.warn(f"meta file {meta_file} not found")
@@ -118,28 +116,43 @@ class TarTestDetDataset(BaseDataset):
     }
 
     def __init__(self,
-                 shards_path_or_url: Union[str, List[str]],
+                 shards: Union[str],
+                 cache_dir: str = None,
                  pipeline: List[dict] = None,
                  test_mode: bool = True,
+                 transformations: List[dict] = [],
                  *args,
                  **kwargs) -> None:
-        self.shards_path_or_url = shards_path_or_url
+        self.shards = shards
+        # 如果是分布式
+        if mmengine.dist.is_distributed():
+            # 计算每个进程的 shard 数量
+            world_size = mmengine.dist.get_world_size()
+            rank = mmengine.dist.get_rank()
+            cache_dir = os.path.join(cache_dir, f'cache_{rank}')
+        self.dataset = wids.ShardListDataset(self.shards, cache_dir=cache_dir, transformations=transformations)
         super().__init__(pipeline=pipeline, test_mode=test_mode, *args, **kwargs)
 
+    def __len__(self):
+        return len(self.dataset)
 
     def load_data_list(self):
-        print('load test data to memory')
-        dataset = list(wds.WebDataset(self.shards_path_or_url, nodesplitter=None))
-        print(f'data len: {len(dataset)}')
+        # pseudo data list
+        dataset = [{'img_id': i} for i in range(len(self.dataset))]
+        print('num samples: ', len(dataset))
         return dataset
 
     def prepare_data(self, idx):
-        sample = self.get_data_info(idx)
+        # print('idx: ', idx, 'len: ', len(self.dataset))
+        try:
+            sample = self.dataset[idx]
+        except Exception as e:
+            print(f'Failed to load image {idx}: {e}')
+            return None
         sample_key = sample["__key__"]
-
-        img_bytes = sample['png.png']
-        gt_data = json.loads(sample['png.json'])
-        gt_data['img_bytes'] = img_bytes
+        img = sample['.png.png']
+        gt_data = sample['.png.json']
+        gt_data['img'] = img
         data = self.pipeline(gt_data)
         if data is None:
             print(f'{sample_key} is None')

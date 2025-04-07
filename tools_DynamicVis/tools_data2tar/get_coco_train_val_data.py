@@ -1,4 +1,7 @@
+import io
 import sys
+
+import PIL
 import cv2
 sys.path.append(sys.path[0] + '/../..')
 import mmcv
@@ -21,7 +24,7 @@ def save_as_tar(item):
 		pbar.start()
 
 	sink = wds.TarWriter(out_file_path, encoder=False)
-
+	num_samples = 0
 	for gt_img_file in gt_img_files:
 		'''
 		data_item = {
@@ -42,16 +45,23 @@ def save_as_tar(item):
 			print(f'File not found: {img_path}')
 			continue
 		img_bytes = fileio.get(img_path, backend_args=None)
-
+		try:
+			img = np.asarray(PIL.Image.open(io.BytesIO(img_bytes)))
+		except Exception as e:
+			print(f'Error: {img_path}, {e}')
+			continue
 		sample = {
 			'__key__': img_name,
 			'png': img_bytes,
 			'json': gt_data.encode('utf-8')
 		}
 		sink.write(sample)
+		num_samples += 1
 		if idx_worker == 0:
 			pbar.update()
 	sink.close()
+	# 返回样本数目
+	return num_samples
 
 
 def read_coco_rows(coco_ann_path, coco_dataset_path):
@@ -74,7 +84,7 @@ def read_coco_rows(coco_ann_path, coco_dataset_path):
 	# 收集有效的图像数据
 	image_data = []
 	for img_info in tqdm(coco_ann['images'], desc=f'Processing {split} images'):
-		img_path = os.path.join(coco_dataset_path, 'inpainting_merge_20250405', img_info['file_name'])
+		img_path = os.path.join(coco_dataset_path, 'inpainting', img_info['file_name'])
 
 		if not os.path.exists(img_path):
 			print(f"Warning: {img_path} not exists, skip")
@@ -140,26 +150,41 @@ if __name__ == '__main__':
 	for split in ['train', 'test']:
 		out_dir_tmp = f'{tar_save_dir}/{split}'
 		mmengine.mkdir_or_exist(out_dir_tmp)
-		coco_ann_path = os.path.join(coco_dataset_path, f"{split}_20250405_new_filter.json")
+		coco_ann_path = os.path.join(coco_dataset_path, f"{split}_ann_.json")
 		items = read_coco_rows(coco_ann_path, coco_dataset_path)
 
-		num_samples = len(items)
+		random.shuffle(items)
+		# split items to n_shards
+		items = np.array_split(items, n_shards)
+		# 建立索引文件
+		index_file = {
+			"wids_version": 1,
+			"shardlist": [],
+			"name": f"coco_road_{split}",
+		}
+
+		items = [(list(x), f'{out_dir_tmp}/{idx:05d}.tar', idx) for idx, x in enumerate(items)]
+
+		if n_process > 1:
+			results = mmengine.track_parallel_progress(save_as_tar, items, n_process)
+		else:
+			results = mmengine.track_progress(save_as_tar, items)
+
+		for idx, x in enumerate(results):
+			index_file['shardlist'].append({
+				'url': f'{idx:05d}.tar',
+				'nsamples': x,
+			})
+			print('idx: {}, nsamples: {}'.format(idx, x))
+		mmengine.dump(index_file, f'{out_dir_tmp}/index.json')
+
+		num_samples = sum([x for x in results])
 		print(f'num_samples: {num_samples}')
 		meta_info = dict(
 			num_samples=num_samples,
 			num_shards=n_shards,
 		)
 		mmengine.dump(meta_info, f'{out_dir_tmp}/meta.json')
-
-		random.shuffle(items)
-		# split items to n_shards
-		items = np.array_split(items, n_shards)
-		items = [(list(x), f'{out_dir_tmp}/{idx:05d}.tar', idx) for idx, x in enumerate(items)]
-
-		if n_process > 1:
-			mmengine.track_parallel_progress(save_as_tar, items, n_process)
-		else:
-			mmengine.track_progress(save_as_tar, items)
 
 
 
