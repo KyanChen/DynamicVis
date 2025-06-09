@@ -348,7 +348,6 @@ ${DATASET_ROOT} # Dataset root directory, e.g., /home/username/data/NWPU
 #### Dataset Organization
 
 ```
-${DATASET_ROOT} # 数据集根目录，例如：/home/username/data/Massachusetts
 ${DATASET_ROOT} # Dataset root directory, e.g., /home/username/data/Massachusetts
 ├── train_imgs
 │   ├── train_0.tif
@@ -392,7 +391,6 @@ ${DATASET_ROOT} # Dataset root directory, e.g., /home/username/data/Massachusett
 #### Dataset Organization
 
 ```
-${DATASET_ROOT} # 数据集根目录，例如：/home/username/data/LEVIR-CD
 ${DATASET_ROOT} # Dataset root directory, e.g., /home/username/data/LEVIR-CD
 ├── A
 │   ├── A_0.jpg
@@ -484,7 +482,6 @@ The following are some key parameter explanations other than the pretraining par
 
 **Parameter Explanation**:
 
-- `pretrained_ckpt`：模型微调的预训练检查点路径，**需要根据实际情况进行修改**。
 - `pretrained_ckpt`: Path to the pretrained checkpoint for model fine-tuning, **needs to be modified according to the actual situation**.
 
 
