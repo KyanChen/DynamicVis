@@ -31,7 +31,7 @@ class DynamicVisBackbone(nn.Module):
                 type='Pretrained',
                 checkpoint=checkpoint,
                 prefix='backbone.'),
-        ),
+        )
 
         model = MODELS.build(backbone)
         model.init_weights()
