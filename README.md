@@ -1,6 +1,6 @@
 <div align="center">
     <h2>
-       DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding
+       DynamicVis: Dynamic visual perception for efficient remote sensing foundation models
     </h2>
 </div>
 <br>
@@ -12,6 +12,10 @@
 <div align="center">
   <a href="https://github.com/KyanChen/DynamicVis">
     <span style="font-size: 20px; ">Homepage</span>
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://doi.org/10.1016/j.isprsjprs.2026.09.042">
+    <span style="font-size: 20px; ">Journal</span>
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://arxiv.org/abs/2503.16426">
@@ -41,7 +45,7 @@ English | [简体中文](README_zh-CN.md)
 
 ## Introduction
 
-This repository contains the official implementation of the paper [DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding](https://arxiv.org/abs/2503.16426), developed based on the [OpenMMLab](https://openmmlab.com/codebase) framework.
+This repository contains the official implementation of the paper [DynamicVis: Dynamic visual perception for efficient remote sensing foundation models](https://doi.org/10.1016/j.isprsjprs.2026.09.042), developed based on the [OpenMMLab](https://openmmlab.com/codebase) framework.
 
 DynamicVis is a dynamic visual perception foundation model for remote sensing, achieving efficient low-resource parsing of ultra-large images (2048x2048 pixels processing requires only 800MB GPU RAM) through a selective region-aware architecture and multi-instance meta-embedding learning. The model demonstrates exceptional performance across nine remote sensing downstream tasks, with \~20x computational efficiency and \~97% memory reduction compared to ViT, enabling cross-task understanding of high-resolution remote sensing imagery.
 
@@ -710,11 +714,17 @@ This project is built upon [OpenMMLab](https://openmmlab.com/codebase). We thank
 If you use DynamicVis in your research, please cite:
 
 ```bibtex
-@article{chen2025dynamicvis,
-  title={DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding},
-  author={Chen, Keyan and Liu, Chenyang and Chen, Bowen and Li, Wenyuan and Zou, Zhengxia and Shi, Zhenwei},
-  journal={arXiv preprint arXiv:2503.16426},
-  year={2025}
+@article{chen2027dynamicvis,
+  title={DynamicVis: Dynamic visual perception for efficient remote sensing foundation models},
+  author={Chen, Keyan and Liu, Chenyang and Chen, Bowen and Li, Wenyuan and Zou, Zhengxia and Lu, Shijian and Shi, Zhenwei},
+  journal={ISPRS Journal of Photogrammetry and Remote Sensing},
+  volume={243},
+  number={Part 1},
+  pages={182--207},
+  year={2027},
+  month=jan,
+  doi={10.1016/j.isprsjprs.2026.09.042},
+  url={https://doi.org/10.1016/j.isprsjprs.2026.09.042}
 }
 ```
 

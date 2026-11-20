@@ -1,6 +1,6 @@
 <div align="center">
     <h2>
-        DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding
+        DynamicVis: Dynamic visual perception for efficient remote sensing foundation models
     </h2>
 </div>
 <br>
@@ -12,6 +12,10 @@
 <div align="center">
   <a href="https://github.com/KyanChen/DynamicVis">
     <span style="font-size: 20px; ">项目主页</span>
+  </a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://doi.org/10.1016/j.isprsjprs.2026.09.042">
+    <span style="font-size: 20px; ">期刊正式版</span>
   </a>
   &nbsp;&nbsp;&nbsp;&nbsp;
   <a href="https://arxiv.org/abs/2503.16426">
@@ -41,7 +45,7 @@
 
 ## 简介
 
-本项目仓库是论文 [DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding](https://arxiv.org/abs/2503.16426) 的代码实现，基于 [OpenMMLab](https://openmmlab.com/codebase) 代码库进行开发。
+本项目仓库是论文 [DynamicVis: Dynamic visual perception for efficient remote sensing foundation models](https://doi.org/10.1016/j.isprsjprs.2026.09.042) 的代码实现，基于 [OpenMMLab](https://openmmlab.com/codebase) 代码库进行开发。
 
 遥感动态视觉感知大模型DynamicVis，通过选择性区域感知架构与多实例元嵌入学习，实现超大尺寸图像的高效低资源解析（2048x2048像素处理仅需800MB显存）。该模型在九大遥感下游任务中展现卓越性能，计算效率达ViT的\~20倍且内存消耗降低\~97%，为高分辨率遥感影像的跨任务理解提供支持。
 
@@ -708,11 +712,17 @@ sh tools_opencd/dist_test.sh configs_DynamicVis/LEVIR-CD/name_to_config.py ${CHE
 如果你在研究中使用了本项目的代码或者性能基准，请参考如下 bibtex 引用 DynamicVis。
 
 ```
-@article{chen2025dynamicvis,
-  title={DynamicVis: An Efficient and General Visual Foundation Model for Remote Sensing Image Understanding},
-  author={Chen, Keyan and and Liu, Chenyang and Chen, Bowen and Li, Wenyuan and Zou, Zhengxia and Shi, Zhenwei},
-  journal={arXiv preprint arXiv:2503.16426},
-  year={2025}
+@article{chen2027dynamicvis,
+  title={DynamicVis: Dynamic visual perception for efficient remote sensing foundation models},
+  author={Chen, Keyan and Liu, Chenyang and Chen, Bowen and Li, Wenyuan and Zou, Zhengxia and Lu, Shijian and Shi, Zhenwei},
+  journal={ISPRS Journal of Photogrammetry and Remote Sensing},
+  volume={243},
+  number={Part 1},
+  pages={182--207},
+  year={2027},
+  month=jan,
+  doi={10.1016/j.isprsjprs.2026.09.042},
+  url={https://doi.org/10.1016/j.isprsjprs.2026.09.042}
 }
 ```
 
